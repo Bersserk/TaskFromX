@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stop = findViewById(R.id.stop);
         text = findViewById(R.id.text);
 
-
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
     }
@@ -31,8 +30,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         text.setText(s);
     }
 
-
-
     @Override
     public void onClick(View v){
         switch (v.getId()) {
@@ -40,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //this.text.setText("сервис запущен");
                 //Log.d("LOG", "text из MainActivity " + text.getText());
                 startService(new Intent(this, MyService.class));
-
                 break;
             case R.id.stop:
                 //text.setText("Нажата кнопка Button2");
@@ -48,5 +44,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
 }
