@@ -1,17 +1,25 @@
 package com.example.onjava;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button start, stop;
-    public static TextView text;
+    TextView text;
+
+    BroadcastReceiver customReceiver;
+    IntentFilter intentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +32,71 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
+
+        intentFilter = new IntentFilter(MyReceiver.TIME);
+
+        customReceiver = new BroadcastReceiver() {
+
+            int time;
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("LOG", "MyReceiver: сработал метод onReciever");
+                Log.d("LOG", "MyReceiver: значение i из MyService - " + intent);
+
+                time = intent.getIntExtra(MyService.TIME, 0);
+                text.setText("time = " + time);
+                Toast.makeText(context, "значение i = " + time, Toast.LENGTH_SHORT).show();
+            }
+        };
+
+
+
+
+
+
     }
 
-    public static void newText(String s){
-        text.setText(s);
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("LOG", "Main: onResume");
+
+        registerReceiver(customReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("LOG", "Main: onPause");
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("LOG", "Main: onDestroy");
+
+        MyService ms = new MyService();
+        ms.stopSelf();
+
     }
 
     @Override
     public void onClick(View v){
+
         switch (v.getId()) {
+
             case R.id.start:
-                //this.text.setText("сервис запущен");
-                //Log.d("LOG", "text из MainActivity " + text.getText());
                 startService(new Intent(this, MyService.class));
+                Toast.makeText(this, "нажата кнопка стартсервис", Toast.LENGTH_SHORT).show();
                 break;
+
             case R.id.stop:
-                //text.setText("Нажата кнопка Button2");
+                unregisterReceiver(customReceiver);
                 stopService(new Intent(this, MyService.class));
                 break;
         }

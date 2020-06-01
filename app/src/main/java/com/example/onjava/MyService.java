@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MyService extends Service {
 
+    public static String TIME = "TIME";
+
     Boolean stop = false;
 
     @Override
@@ -36,20 +38,20 @@ public class MyService extends Service {
     }
 
     private void setTime() {
-        //MainActivity.text.setText("new text");
-        Log.d("LOG", "new text - " + MainActivity.text.getText() );
-        Log.d("LOG", "setTime" );
+
         new Thread(new Runnable() {
             public void run() {
+                int i = 0;
+
                 Log.d("LOG", "run" );
-                for (int i = 0; i > -1 ; i++) {
-                    if(stop)
-                        break;
+                while (!stop) {
                     try {
-                        TimeUnit.SECONDS.sleep(2);
-                        MainActivity.newText("newtext");
+                        TimeUnit.SECONDS.sleep(5);
                         Log.d("LOG", "try " + i);
-                        //MainActivity.text.setText("text");
+                        Intent intent = new Intent(MyReceiver.TIME);
+                        intent.putExtra(TIME, i);
+                        sendBroadcast(intent);
+                        i++;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
