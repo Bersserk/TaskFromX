@@ -7,19 +7,26 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button start, stop;
     TextView text;
+    ListView listView;
 
     BroadcastReceiver customReceiver;
     IntentFilter intentFilter;
+    ArrayAdapter<String> adapter;
+    ArrayList <String> num;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +36,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start = findViewById(R.id.start);
         stop = findViewById(R.id.stop);
         text = findViewById(R.id.text);
+        listView = findViewById(R.id.lv);
 
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
+
+        num = new ArrayList<String>(10);
+
 
         intentFilter = new IntentFilter(MyReceiver.TIME);
 
@@ -45,7 +56,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("LOG", "MyReceiver: значение i из MyService - " + intent);
 
                 time = intent.getIntExtra(MyService.TIME, 0);
-                text.setText("time = " + time);
+                String s = String.valueOf(time);
+
+
+
+
+                num.add(String.valueOf(time));
+                if(num.size() == 10)
+                    num.remove(0);
+
+
+                Log.d("LOG", "Arraylist = " + num.size());
+
+                adapter = new ArrayAdapter<String>(getApplication(),
+                        android.R.layout.simple_list_item_1, num);
+
+                listView.setAdapter(adapter);
+
+                /*
+                if (time == 11 ) {
+                    text.setText("");
+                }
+                    text.append(time+"\n");
+                */
+
+
+
                 Toast.makeText(context, "значение i = " + time, Toast.LENGTH_SHORT).show();
             }
         };
