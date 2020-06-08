@@ -21,17 +21,16 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button start, stop;
-    TextView text;
-    LinearLayout linLayout;
-    StringBuffer bufferText;
+    private Button start, stop;
+    private TextView text;
+    private LinearLayout linLayout;
+    private StringBuffer bufferText;
 
-    BroadcastReceiver customReceiver;
-    IntentFilter intentFilter;
-    ArrayList<String> timeList;
+    private BroadcastReceiver customReceiver;
+    private IntentFilter intentFilter;
+    private ArrayList<String> timeList;
 
     public static final String TIME = "SERVICE_TIME";
-    int time;
 
     // in this line, we can set time interval for tv
     public static final int INTERVAL_TIME_SECONDS = 10;
@@ -66,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onReceive(Context context, Intent intent) {
-
-                // get intent from the class MyService
-                time = intent.getIntExtra(MyService.TIME, 0);
 
                 // get real time data (74-76)
                 long date = System.currentTimeMillis();
