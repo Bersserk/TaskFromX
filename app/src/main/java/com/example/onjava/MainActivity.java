@@ -6,135 +6,120 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button start, stop;
     TextView text;
-    ListView listView;
+    LinearLayout linLayout;
 
     BroadcastReceiver customReceiver;
     IntentFilter intentFilter;
-    ArrayAdapter<String> adapter;
-    ArrayList <String> num;
+    ArrayList<String> timeList;
+
+    public static final int INTERVAL_TIME_SECONDS = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         start = findViewById(R.id.start);
         stop = findViewById(R.id.stop);
-        text = findViewById(R.id.text);
-        listView = findViewById(R.id.lv);
+        linLayout = findViewById(R.id.linLayout);
 
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
 
-        num = new ArrayList<String>(10);
-
-
         intentFilter = new IntentFilter(MyReceiver.TIME);
+
+        text = new TextView(this);
+        text.setTextSize(32);
+        text.setLayoutParams(new ViewGroup.LayoutParams
+                (ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        text.setGravity(Gravity.TOP);
+        linLayout.addView(text);
 
         customReceiver = new BroadcastReceiver() {
 
-            int time;
-
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d("LOG", "MyReceiver: сработал метод onReciever");
-                Log.d("LOG", "MyReceiver: значение i из MyService - " + intent);
 
-                time = intent.getIntExtra(MyService.TIME, 0);
-                String s = String.valueOf(time);
+                long date = System.currentTimeMillis();
 
+                SimpleDateFormat sdf = new SimpleDateFormat("hh : mm : ss  a");
+                final String dateString = sdf.format(date);
 
-
-
-                num.add(String.valueOf(time));
-                if(num.size() == 10)
-                    num.remove(0);
+                timeList.add(dateString);
+                StringBuffer bufferText;
 
 
-                Log.d("LOG", "Arraylist = " + num.size());
+                if (timeList.size() > (text.getHeight()) / 77) {
+                    timeList.remove(0);
 
-                adapter = new ArrayAdapter<String>(getApplication(),
-                        android.R.layout.simple_list_item_1, num);
+                    bufferText = new StringBuffer();
 
-                listView.setAdapter(adapter);
+                    for (String s : timeList) {
+                        bufferText.append(s + "\n");
+                    }
 
-                /*
-                if (time == 11 ) {
-                    text.setText("");
+                    text.setText(bufferText);
+                } else {
+                    text.append(dateString + "\n");
                 }
-                    text.append(time+"\n");
-                */
-
-
-
-                Toast.makeText(context, "значение i = " + time, Toast.LENGTH_SHORT).show();
             }
         };
-
-
-
-
-
-
-    }
-
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("LOG", "Main: onResume");
-
-        registerReceiver(customReceiver, intentFilter);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("LOG", "Main: onPause");
-
-
+    public void onBackPressed() {
+        super.onBackPressed();
+        stopAllTask();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d("LOG", "Main: onDestroy");
-
-        MyService ms = new MyService();
-        ms.stopSelf();
-
+        stopAllTask();
     }
 
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
 
         switch (v.getId()) {
 
             case R.id.start:
+                timeList = new ArrayList<>();
+                text.setText("");
+                registerReceiver(customReceiver, intentFilter);
                 startService(new Intent(this, MyService.class));
-                Toast.makeText(this, "нажата кнопка стартсервис", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Service and Timer started", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.stop:
-                unregisterReceiver(customReceiver);
-                stopService(new Intent(this, MyService.class));
+                stopAllTask();
                 break;
         }
     }
+
+    private void stopAllTask() {
+        unregisterReceiver(customReceiver);
+        stopService(new Intent(this, MyService.class));
+        Toast.makeText(this, "Service and Timer stoped", Toast.LENGTH_SHORT).show();
+    }
+
 }

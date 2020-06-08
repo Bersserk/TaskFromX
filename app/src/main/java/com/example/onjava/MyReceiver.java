@@ -13,12 +13,10 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("LOG", "MyReceiver: сработал метод onReciever");
-        Log.d("LOG", "MyReceiver: значение i из MyService - " + intent);
+        Log.d("LOG", "MyReceiver: сработал метод onReceiver");
+        Log.d("LOG", "MyReceiver: значение intent из MyService - " + intent);
 
         time = intent.getIntExtra(MyService.TIME, 0);
-        Toast.makeText(context, "значение i = " + time, Toast.LENGTH_SHORT).show();
-
-
+        Toast.makeText(context, "значение time in onReceiver = " + time, Toast.LENGTH_SHORT).show();
     }
 }

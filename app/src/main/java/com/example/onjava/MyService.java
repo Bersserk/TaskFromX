@@ -7,6 +7,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.onjava.MainActivity.INTERVAL_TIME_SECONDS;
+
 public class MyService extends Service {
 
     public static String TIME = "TIME";
@@ -46,7 +48,7 @@ public class MyService extends Service {
                 Log.d("LOG", "run" );
                 while (!stop) {
                     try {
-                        TimeUnit.SECONDS.sleep(5);
+                        TimeUnit.SECONDS.sleep(INTERVAL_TIME_SECONDS);
                         Log.d("LOG", "try " + i);
                         Intent intent = new Intent(MyReceiver.TIME);
                         intent.putExtra(TIME, i);
@@ -55,7 +57,7 @@ public class MyService extends Service {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.d("LOG", "while");
+                    //Log.d("LOG", "while");
                 }
                 Log.d("LOG", "вышли с цикла");
                 stopSelf();
