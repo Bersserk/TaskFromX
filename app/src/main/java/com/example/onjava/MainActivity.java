@@ -24,11 +24,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button start, stop;
     TextView text;
     LinearLayout linLayout;
+    StringBuffer bufferText;
 
     BroadcastReceiver customReceiver;
     IntentFilter intentFilter;
     ArrayList<String> timeList;
 
+    public static final String TIME = "SERVICE_TIME";
+    int time;
+
+    // in this line, we can set time interval for tv
     public static final int INTERVAL_TIME_SECONDS = 10;
 
     @Override
@@ -44,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
 
-        intentFilter = new IntentFilter(MyReceiver.TIME);
 
+        // this block code 53-58, we add and set parameters for our textView
         text = new TextView(this);
         text.setTextSize(32);
         text.setLayoutParams(new ViewGroup.LayoutParams
@@ -53,20 +58,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         text.setGravity(Gravity.TOP);
         linLayout.addView(text);
 
+        // add intentFilter with static key
+        intentFilter = new IntentFilter(TIME);
+
+        // create Receiver, and override method onReceiver()
         customReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                long date = System.currentTimeMillis();
+                // get intent from the class MyService
+                time = intent.getIntExtra(MyService.TIME, 0);
 
+                // get real time data (74-76)
+                long date = System.currentTimeMillis();
                 SimpleDateFormat sdf = new SimpleDateFormat("hh : mm : ss  a");
                 final String dateString = sdf.format(date);
 
+                // add data in ArrayList
                 timeList.add(dateString);
-                StringBuffer bufferText;
 
-
+                // create a ArrayList display condition (82-94)
                 if (timeList.size() > (text.getHeight()) / 77) {
                     timeList.remove(0);
 
@@ -84,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
     }
 
+    // When press back button, we will stop service, timer and activity
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -95,8 +108,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         Log.d("LOG", "Main: onDestroy");
         stopAllTask();
+        unregisterReceiver(customReceiver);
     }
 
+       /*
+       method onClick for realisation button start and stop, when press start, we start service and timer.
+       When press stop, we will stop all service and timer
+       */
     @Override
     public void onClick(View v) {
 
@@ -117,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void stopAllTask() {
-        unregisterReceiver(customReceiver);
         stopService(new Intent(this, MyService.class));
         Toast.makeText(this, "Service and Timer stoped", Toast.LENGTH_SHORT).show();
     }

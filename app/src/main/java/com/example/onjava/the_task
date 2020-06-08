@@ -1,3 +1,10 @@
+Create an application from one activity and service, in which there are only two start / stop buttons (or one toggleButton) on the activation
+and the text View, initially with empty text.
+1. At the start, the service starts, in the stop - accordingly, it stops.
+2. The timer starts in the service and every 10 seconds you need to send the time to the activity,
+   writing it in a column, one after another, in that text View.
+3. By pressing the stop, both the service and the timer stop.
+
 Создай приложение из одного активити и сервиса, в котором на активити только две кнопки старт/стоп (или одна toggleButton) и под ней текстВью,
 изначально с пустым текстом.
 1.   По старту запускается сервис, по стопу - соответственно, останавливается.

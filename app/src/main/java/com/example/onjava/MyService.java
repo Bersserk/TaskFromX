@@ -16,12 +16,8 @@ public class MyService extends Service {
     Boolean stop = false;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // run the method to start the thread
         setTime ();
         return super.onStartCommand(intent, flags, startId);
     }
@@ -39,27 +35,24 @@ public class MyService extends Service {
         return null;
     }
 
+    // This method implements a thread and sends the intent with the data to the Broadcast
     private void setTime() {
-
         new Thread(new Runnable() {
             public void run() {
                 int i = 0;
 
-                Log.d("LOG", "run" );
                 while (!stop) {
                     try {
                         TimeUnit.SECONDS.sleep(INTERVAL_TIME_SECONDS);
                         Log.d("LOG", "try " + i);
-                        Intent intent = new Intent(MyReceiver.TIME);
+                        Intent intent = new Intent(MainActivity.TIME);
                         intent.putExtra(TIME, i);
                         sendBroadcast(intent);
                         i++;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //Log.d("LOG", "while");
                 }
-                Log.d("LOG", "вышли с цикла");
                 stopSelf();
             }
         }).start();
