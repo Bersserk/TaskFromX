@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                // get real time data (74-76)
+                // get real time data (70-72)
                 long date = System.currentTimeMillis();
                 SimpleDateFormat sdf = new SimpleDateFormat("hh : mm : ss  a");
                 final String dateString = sdf.format(date);
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // add data in ArrayList
                 timeList.add(dateString);
 
-                // create a ArrayList display condition (82-94)
+                // create a ArrayList display condition (78-90)
                 if (timeList.size() > (text.getHeight()) / 77) {
                     timeList.remove(0);
 
@@ -134,5 +134,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stopService(new Intent(this, MyService.class));
         Toast.makeText(this, "Service and Timer stoped", Toast.LENGTH_SHORT).show();
     }
-
 }
